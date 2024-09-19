@@ -1,0 +1,45 @@
+import numpy as np
+# Función para aplicar el método de Gauss-Seidel
+def gauss_seidel(A, b, x_init, tol=1e-4, max_iter=1000):
+    n = len(b)
+    x = x_init.copy()
+    for k in range(max_iter):
+        x_old = x.copy()
+        for i in range(n):
+            # Calcular la suma excluyendo el término de la diagonal
+            s1 = sum(A[i][j] * x[j] for j in range(i))
+            s2 = sum(A[i][j] * x_old[j] for j in range(i + 1, n))
+            x[i] = (b[i] - s1 - s2) / A[i][i]
+        
+        # Calcular el error absoluto en cada iteración
+        error = np.abs(x - x_old)
+        
+        # Imprimir el error en cada iteración
+        print(f"Iteración {k + 1}: x = {x}, Error = {error}")
+        
+        # Verificar si el error es menor que la tolerancia
+        if np.all(error < tol):
+            print(f"Convergencia alcanzada en {k + 1} iteraciones.")
+            break
+    
+    return x
+
+# Coeficientes de las ecuaciones
+A = np.array([[0.52, 0.20, 0.25],
+              [0.30, 0.50, 0.20],
+              [0.18, 0.30, 0.55]])
+
+# Requerimientos (lado derecho de las ecuaciones)
+b = np.array([4800, 5810, 5690])
+
+# Valor inicial (suponemos que empezamos con 0 en todas las variables)
+x_init = np.zeros(len(b))
+
+# Llamar al método de Gauss-Seidel con tolerancia 0.0001
+solucion = gauss_seidel(A, b, x_init, tol=1e-4)
+
+# Imprimir los resultados finales
+print("La cantidad de metros cúbicos que se debe transportar de cada cantera es:")
+print(f"Cantera 1: {solucion[0]:.2f} m³")
+print(f"Cantera 2: {solucion[1]:.2f} m³")
+print(f"Cantera 3: {solucion[2]:.2f} m³")
